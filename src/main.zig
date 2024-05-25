@@ -14,7 +14,7 @@ fn addOne(x: usize) usize {
 }
 
 // TODO: zip/zip longest, filter map
-// TODO: fix fold, should be able to change types OR change name to reduce
+// TODO: why is filter so slow?
 
 pub fn main() !void {
     var allocator = std.heap.GeneralPurposeAllocator(.{}){};
@@ -35,7 +35,7 @@ pub fn main() !void {
 
     const sum = l: {
         if (test_iter) {
-            const sum = Range(usize).init(0, max, 1).map(usize, addOne).filter(isEven).fold(0, add);
+            const sum = Range(usize).init(0, max, 1).map(usize, addOne).filter(isEven).fold(usize, 0, add);
 
             break :l sum;
         } else {

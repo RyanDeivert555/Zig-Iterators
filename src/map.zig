@@ -33,8 +33,8 @@ pub fn Map(comptime Context: type, comptime T: type, comptime U: type, comptime 
             return Map(Self, U, V, func).init(self);
         }
 
-        pub fn fold(self: Self, start: T, comptime func: fn (U, U) U) U {
-            var result = Fold(Self, U, func).init(self, start);
+        pub fn fold(self: Self, comptime V: type, start: V, comptime func: fn (U, U) V) V {
+            var result = Fold(Self, U, V, func).init(self, start);
 
             return result.consume();
         }

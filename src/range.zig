@@ -55,8 +55,8 @@ pub fn Range(comptime T: type) type {
             return Filter(Self, T, f).init(self);
         }
 
-        pub fn fold(self: Self, start: T, comptime f: fn (T, T) T) T {
-            var result = Fold(Self, T, f).init(self, start);
+        pub fn fold(self: Self, comptime U: type, start: U, comptime f: fn (T, T) U) U {
+            var result = Fold(Self, T, U, f).init(self, start);
 
             return result.consume();
         }

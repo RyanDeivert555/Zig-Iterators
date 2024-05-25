@@ -31,8 +31,8 @@ pub fn Take(comptime Context: type, comptime T: type) type {
             return Map(Self, T, U, func).init(self);
         }
 
-        pub fn fold(self: Self, start: T, comptime func: fn (T, T) T) T {
-            var result = Fold(Self, T, func).init(self, start);
+        pub fn fold(self: Self, comptime U: type, start: U, comptime func: fn (T, T) U) U {
+            var result = Fold(Self, T, U, func).init(self, start);
 
             return result.consume();
         }
