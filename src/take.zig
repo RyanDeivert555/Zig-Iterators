@@ -6,25 +6,25 @@ const Fold = @import("fold.zig").Fold;
 pub fn Take(comptime Context: type, comptime T: type) type {
     return struct {
         context: Context,
-        count: usize,
+        n: usize,
 
         const Self = @This();
 
         pub fn init(context: Context, n: usize) Self {
             return Self{
                 .context = context,
-                .count = n,
+                .n = n,
             };
         }
 
         pub fn next(self: *Self) ?T {
-            self.count -= 1;
-            if (self.count == 0) {
+            if (self.n != 0) {
+                self.n -= 1;
+
+                return self.context.next();
+            } else {
                 return null;
             }
-            const val = self.context.next();
-
-            return val;
         }
 
         pub fn map(self: Self, comptime U: type, comptime func: fn (T) U) Map(Self, T, U, func) {

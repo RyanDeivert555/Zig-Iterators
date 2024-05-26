@@ -35,15 +35,13 @@ pub fn main() !void {
 
     const sum = l: {
         if (test_iter) {
-            const sum = Range(usize).init(0, max, 1).map(usize, addOne).filter(isEven).fold(usize, 0, add);
+            const sum = Range(usize).init(0, max, 1).map(usize, addOne).fold(usize, 0, add);
 
             break :l sum;
         } else {
             var sum: usize = 0;
             for (0..max) |i| {
-                if (@mod(i + 1, 2) == 0) {
-                    sum += i + 1;
-                }
+                sum += i + 1;
             }
 
             break :l sum;
@@ -91,5 +89,16 @@ test "map" {
         try std.testing.expectEqual(9.0, map.next());
         try std.testing.expectEqual(10.0, map.next());
         try std.testing.expectEqual(null, map.next());
+    }
+}
+
+test "take" {
+    var take = Range(i32).init(0, std.math.maxInt(i32), 1).take(100);
+
+    try std.testing.expectEqual(take.count(), 100);
+
+    var i: i32 = 0;
+    while (take.next()) |v| : (i += 1) {
+        try std.testing.expectEqual(v, i);
     }
 }
