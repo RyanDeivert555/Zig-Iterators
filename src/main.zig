@@ -1,5 +1,6 @@
 const std = @import("std");
 const Range = @import("range.zig").Range;
+const Sequence = @import("sequence.zig").Sequence;
 
 fn isEven(x: usize) bool {
     return @mod(x, 2) == 0;
@@ -100,5 +101,15 @@ test "take" {
     var i: i32 = 0;
     while (take.next()) |v| : (i += 1) {
         try std.testing.expectEqual(v, i);
+    }
+}
+
+test "sequence" {
+    // is Sequence even necessary?
+    var seq = Sequence(i32).init(&[_]i32{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+    var i: i32 = 0;
+    while (seq.next()) |v| : (i += 1) {
+        try std.testing.expectEqual(i, v);
     }
 }
