@@ -1,6 +1,7 @@
 const std = @import("std");
 const Range = @import("range.zig").Range;
 const Sequence = @import("sequence.zig").Sequence;
+const Zip = @import("zip.zig").Zip;
 
 fn isEven(x: usize) bool {
     return @mod(x, 2) == 0;
@@ -111,5 +112,44 @@ test "sequence" {
     var i: i32 = 0;
     while (seq.next()) |v| : (i += 1) {
         try std.testing.expectEqual(i, v);
+    }
+}
+
+test "zip" {
+    const seq1 = Sequence(i32).init(&[_]i32{ 0, 1, 2, 3, 4 });
+    const seq2 = Sequence(u32).init(&[_]u32{ 11, 12 });
+
+    // shouldnt be made manually
+    var zip = Zip(Sequence(i32), Sequence(u32), i32, u32).init(seq1, seq2);
+
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, 0);
+        try std.testing.expectEqual(v2, 11);
+    }
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, 1);
+        try std.testing.expectEqual(v2, 12);
+    }
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, 2);
+        try std.testing.expectEqual(v2, null);
+    }
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, 3);
+        try std.testing.expectEqual(v2, null);
+    }
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, 4);
+        try std.testing.expectEqual(v2, null);
+    }
+    {
+        const v1, const v2 = zip.next();
+        try std.testing.expectEqual(v1, null);
+        try std.testing.expectEqual(v2, null);
     }
 }

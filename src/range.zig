@@ -21,7 +21,7 @@ pub fn Range(comptime T: type) type {
         }
 
         pub fn next(self: *Self) ?T {
-            // TODO: fix for backwards iters
+            // TODO: best way to do backwards iters?
             if (self.step < 0) {
                 if (self.start > self.end) {
                     const value = self.start;
