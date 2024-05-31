@@ -2,6 +2,7 @@ const std = @import("std");
 const Map = @import("map.zig").Map;
 const Filter = @import("filter.zig").Filter;
 const Fold = @import("fold.zig").Fold;
+const Zip = @import("zip.zig").Zip;
 
 pub fn Take(comptime Context: type, comptime T: type) type {
     return struct {
@@ -85,6 +86,10 @@ pub fn Take(comptime Context: type, comptime T: type) type {
             }
 
             return n;
+        }
+
+        pub fn zip(self: Self, comptime Other: type, comptime U: type, other: Other) Zip(Self, Other, T, U) {
+            return Zip(Self, Other, T, U).init(self, other);
         }
     };
 }

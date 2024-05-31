@@ -3,6 +3,7 @@ const Map = @import("map.zig").Map;
 const Filter = @import("filter.zig").Filter;
 const Fold = @import("fold.zig").Fold;
 const Take = @import("take.zig").Take;
+const Zip = @import("zip.zig").Zip;
 
 pub fn Range(comptime T: type) type {
     return struct {
@@ -121,6 +122,10 @@ pub fn Range(comptime T: type) type {
             }
 
             return n;
+        }
+
+        pub fn zip(self: Self, comptime Other: type, comptime U: type, other: Other) Zip(Self, Other, T, U) {
+            return Zip(Self, Other, T, U).init(self, other);
         }
     };
 }

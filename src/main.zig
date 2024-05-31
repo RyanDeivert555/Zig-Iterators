@@ -123,33 +123,55 @@ test "zip" {
     var zip = Zip(Sequence(i32), Sequence(u32), i32, u32).init(seq1, seq2);
 
     {
-        const v1, const v2 = zip.next();
+        const result = zip.next();
+        try std.testing.expect(result != null);
+
+        const v1, const v2 = result.?;
         try std.testing.expectEqual(v1, 0);
         try std.testing.expectEqual(v2, 11);
     }
     {
-        const v1, const v2 = zip.next();
+        const result = zip.next();
+        try std.testing.expect(result != null);
+
+        const v1, const v2 = result.?;
         try std.testing.expectEqual(v1, 1);
         try std.testing.expectEqual(v2, 12);
     }
     {
-        const v1, const v2 = zip.next();
-        try std.testing.expectEqual(v1, 2);
-        try std.testing.expectEqual(v2, null);
+        const result = zip.next();
+        try std.testing.expect(result == null);
     }
-    {
-        const v1, const v2 = zip.next();
-        try std.testing.expectEqual(v1, 3);
-        try std.testing.expectEqual(v2, null);
-    }
-    {
-        const v1, const v2 = zip.next();
-        try std.testing.expectEqual(v1, 4);
-        try std.testing.expectEqual(v2, null);
-    }
-    {
-        const v1, const v2 = zip.next();
-        try std.testing.expectEqual(v1, null);
-        try std.testing.expectEqual(v2, null);
+}
+
+test "zip with combinators" {
+    const evens = Range(i32).init(0, 100, 1).filter(struct {
+        fn f(x: i32) bool {
+            return @mod(x, 2) == 0;
+        }
+    }.f);
+    const odds = Range(i32).init(0, 100, 1).filter(struct {
+        fn f(x: i32) bool {
+            return @mod(x, 2) == 1;
+        }
+    }.f);
+
+    // TypeOf feels like a hiccup
+    var iter = evens.zip(@TypeOf(odds), i32, odds).map(i32, struct {
+        fn f(x: struct { i32, i32 }) i32 {
+            const x1, const x2 = x;
+
+            return x1 + x2;
+        }
+    }.f);
+
+    var even_check = @as(i32, 0);
+    var odds_check = @as(i32, 1);
+
+    while (iter.next()) |v| {
+        try std.testing.expectEqual(v, even_check + odds_check);
+
+        even_check += 2;
+        odds_check += 2;
     }
 }
