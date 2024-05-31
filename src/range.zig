@@ -23,25 +23,13 @@ pub fn Range(comptime T: type) type {
         }
 
         pub fn next(self: *Self) ?T {
-            // TODO: best way to do backwards iters?
-            if (self.step < 0) {
-                if (self.start > self.end) {
-                    const value = self.start;
-                    self.start += self.step;
+            if ((self.step > 0 and self.start < self.end) or (self.step < 0 and self.start > self.end)) {
+                const value = self.start;
+                self.start += self.step;
 
-                    return value;
-                } else {
-                    return null;
-                }
+                return value;
             } else {
-                if (self.start < self.end) {
-                    const value = self.start;
-                    self.start += self.step;
-
-                    return value;
-                } else {
-                    return null;
-                }
+                return null;
             }
         }
 
