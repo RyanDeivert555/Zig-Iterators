@@ -15,7 +15,7 @@ fn addOne(x: usize) usize {
     return x + 1;
 }
 
-// TODO: zip/zip longest, filter map
+// TODO: filter map
 // TODO: why is filter so slow?
 
 pub fn main() !void {

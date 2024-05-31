@@ -16,7 +16,7 @@ pub fn Filter(comptime Context: type, comptime T: type, comptime f: fn (T) bool)
             };
         }
 
-        fn findNext(self: *Self) ?T {
+        pub fn next(self: *Self) ?T {
             while (self.context.next()) |val| {
                 if (f(val)) {
                     return val;
@@ -24,16 +24,6 @@ pub fn Filter(comptime Context: type, comptime T: type, comptime f: fn (T) bool)
             }
 
             return null;
-        }
-
-        pub fn next(self: *Self) ?T {
-            const n = self.findNext();
-
-            if (n) |val| {
-                return val;
-            } else {
-                return null;
-            }
         }
 
         pub fn filter(self: Self, comptime predicate: fn (T) bool) Filter(Self, T, predicate) {
