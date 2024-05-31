@@ -1,4 +1,5 @@
 const std = @import("std");
+const Iterator = @import("iterator.zig").Iterator;
 const Map = @import("map.zig").Map;
 const Filter = @import("filter.zig").Filter;
 const Fold = @import("fold.zig").Fold;
@@ -26,6 +27,10 @@ pub fn Zip(comptime Context1: type, comptime Context2: type, comptime T1: type, 
             return .{ left, right };
         }
 
+        pub fn toIter(self: Self) Iterator(Self, Tuple) {
+            return Iterator(Self, Tuple).init(self);
+        }
+
         pub fn map(self: Self, comptime U: type, comptime f: fn (Tuple) U) Map(Self, Tuple, U, f) {
             return Map(Self, Tuple, U, f).init(self);
         }
@@ -41,39 +46,15 @@ pub fn Zip(comptime Context1: type, comptime Context2: type, comptime T1: type, 
         }
 
         pub fn collect(self: Self, allocator: std.mem.Allocator) !std.ArrayList(Tuple) {
-            var instance = self;
-            // TODO: preallocate memory?
-            var result = std.ArrayList(Tuple).init(allocator);
-
-            while (instance.next()) |val| {
-                try result.append(val);
-            }
-
-            return result;
+            return self.toIter().collect(allocator);
         }
 
         pub fn all(self: Self, predicate: fn (Tuple) bool) bool {
-            var instance = self;
-
-            while (instance.next()) |val| {
-                if (!predicate(val)) {
-                    return false;
-                }
-            }
-
-            return true;
+            return self.toIter().all(predicate);
         }
 
         pub fn any(self: Self, predicate: fn (Tuple) bool) bool {
-            var instance = self;
-
-            while (instance.next()) |val| {
-                if (predicate(val)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return self.toIter().any(predicate);
         }
 
         pub fn take(self: Self, n: usize) Take(Self, Tuple) {
@@ -81,14 +62,7 @@ pub fn Zip(comptime Context1: type, comptime Context2: type, comptime T1: type, 
         }
 
         pub fn count(self: Self) usize {
-            var instance = self;
-            var n = @as(usize, 0);
-
-            while (instance.next()) |_| {
-                n += 1;
-            }
-
-            return n;
+            return self.toIter().count();
         }
 
         pub fn zip(self: Self, comptime Other: type, comptime U: type, other: Other) Zip(Self, Other, Tuple, U) {
