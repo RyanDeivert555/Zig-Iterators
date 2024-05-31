@@ -21,19 +21,19 @@ pub fn Iterator(comptime Context: type, comptime T: type) type {
             return self.context.next();
         }
 
-        // pub fn map(self: Self, comptime U: type, comptime f: fn (T) U) Map(Self, T, U, f) {
-        //     return Map(Self, T, U, f).init(self);
-        // }
+        pub fn map(self: Self, comptime U: type, comptime f: fn (T) U) Map(Self, T, U, f) {
+            return Map(Self, T, U, f).init(self);
+        }
 
-        // pub fn filter(self: Self, comptime f: fn (T) bool) Filter(Self, T, f) {
-        //     return Filter(Self, T, f).init(self);
-        // }
+        pub fn filter(self: Self, comptime f: fn (T) bool) Filter(Self, T, f) {
+            return Filter(Self, T, f).init(self);
+        }
 
-        // pub fn fold(self: Self, comptime U: type, start: U, comptime f: fn (T, T) U) U {
-        //     var instance = Fold(Self, T, U, f).init(self, start);
+        pub fn fold(self: Self, comptime U: type, start: U, comptime f: fn (T, T) U) U {
+            var instance = Fold(Self, T, U, f).init(self, start);
 
-        //     return instance.consume();
-        // }
+            return instance.consume();
+        }
 
         pub fn collect(self: Self, allocator: std.mem.Allocator) !std.ArrayList(T) {
             var instance = self;
@@ -70,9 +70,9 @@ pub fn Iterator(comptime Context: type, comptime T: type) type {
             return false;
         }
 
-        // pub fn take(self: Self, n: usize) Take(Self, T) {
-        //     return Take(Self, T).init(self, n);
-        // }
+        pub fn take(self: Self, n: usize) Take(Self, T) {
+            return Take(Self, T).init(self, n);
+        }
 
         pub fn count(self: Self) usize {
             var instance = self;
@@ -85,8 +85,8 @@ pub fn Iterator(comptime Context: type, comptime T: type) type {
             return n;
         }
 
-        // pub fn zip(self: Self, comptime Other: type, comptime U: type, other: Other) Zip(Self, Other, T, U) {
-        //     return Zip(Self, Other, T, U).init(self, other);
-        // }
+        pub fn zip(self: Self, comptime Other: type, comptime U: type, other: Other) Zip(Self, Other, T, U) {
+            return Zip(Self, Other, T, U).init(self, other);
+        }
     };
 }
