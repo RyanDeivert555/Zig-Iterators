@@ -27,13 +27,7 @@ pub fn main() !void {
     defer argsIterator.deinit();
     _ = argsIterator.skip();
 
-    const test_iter = l: {
-        if (argsIterator.next()) |val| {
-            break :l std.mem.eql(u8, val, "true");
-        } else {
-            break :l false;
-        }
-    };
+    const test_iter = if (argsIterator.next()) |val| std.mem.eql(u8, "true", val) else false;
 
     const max = 1_000_000_000;
 
