@@ -2,6 +2,7 @@ const std = @import("std");
 const Range = @import("range.zig").Range;
 const Sequence = @import("sequence.zig").Sequence;
 const Zip = @import("zip.zig").Zip;
+const FilterMap = @import("filter_map.zig").FilterMap;
 
 fn isEven(x: usize) bool {
     return @mod(x, 2) == 0;
@@ -17,6 +18,7 @@ fn addOne(x: usize) usize {
 
 // TODO: filter map
 // TODO: why is filter so slow?
+// TODO: make iterators constructable from anytype
 
 pub fn main() !void {
     var allocator = std.heap.GeneralPurposeAllocator(.{}){};
@@ -107,7 +109,7 @@ test "take" {
 
 test "sequence" {
     // is Sequence even necessary?
-    var seq = Sequence(i32).init(&[_]i32{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    var seq = Sequence(i32).init(&.{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 
     var i: i32 = 0;
     while (seq.next()) |v| : (i += 1) {
@@ -116,8 +118,8 @@ test "sequence" {
 }
 
 test "zip" {
-    const seq1 = Sequence(i32).init(&[_]i32{ 0, 1, 2, 3, 4 });
-    const seq2 = Sequence(u32).init(&[_]u32{ 11, 12 });
+    const seq1 = Sequence(i32).init(&.{ 0, 1, 2, 3, 4 });
+    const seq2 = Sequence(u32).init(&.{ 11, 12 });
 
     // shouldnt be made manually
     var zip = Zip(Sequence(i32), Sequence(u32), i32, u32).init(seq1, seq2);
@@ -174,4 +176,23 @@ test "zip with combinators" {
         even_check += 2;
         odds_check += 2;
     }
+}
+
+test "filter_map" {
+    // TODO: test this more
+    const maybe_nums = Sequence(?i32).init(&.{ 1, null, 3, 4, null, null });
+    const f = struct {
+        fn func(x: ?i32) ?f32 {
+            if (x == null) {
+                return -1.0;
+            }
+            return null;
+        }
+    }.func;
+    var some_nums = FilterMap(@TypeOf(maybe_nums), i32, f32, f).init(maybe_nums);
+
+    try std.testing.expectEqual(-1.0, some_nums.next());
+    try std.testing.expectEqual(-1.0, some_nums.next());
+    try std.testing.expectEqual(-1.0, some_nums.next());
+    try std.testing.expectEqual(null, some_nums.next());
 }
