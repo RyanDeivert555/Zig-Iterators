@@ -21,9 +21,10 @@ fn addOne(x: usize) usize {
 // TODO: make iterators constructable from anytype
 
 pub fn main() !void {
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    const gpa = allocator.allocator();
-    var argsIterator = try std.process.ArgIterator.initWithAllocator(gpa);
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+    var argsIterator = try std.process.ArgIterator.initWithAllocator(allocator);
     defer argsIterator.deinit();
     _ = argsIterator.skip();
 
