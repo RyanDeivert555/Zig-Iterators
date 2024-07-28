@@ -16,7 +16,6 @@ fn addOne(x: usize) usize {
     return x + 1;
 }
 
-// TODO: filter map
 // TODO: why is filter so slow?
 // TODO: make iterators constructable from anytype
 
